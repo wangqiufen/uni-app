@@ -4,22 +4,27 @@
     <uni-nav-bar class="search" :fixed="true" color="#FFF" background-color="#F75E30" left-icon="scan" @click-left="showCity" @click-right="scan">
       <block slot="left">
         <view class="scan-view">
-          <uni-icon type="arrowdown" color="#FFF" size="22" />
+          <uni-icons type="arrowdown" color="#FFF" size="22" />
           <view>扫一扫</view>
         </view>
       </block>
       <view class="input-view">
-        <uni-icon class="uni-icon" type="search" color="#7F7F7F" size="15" />
+        <uni-icons class="uni-icon" type="search" color="#7F7F7F" size="15" />
         <input confirm-type="search" class="input" type="text" value="新一代V3.0智能手环发售" placeholder="输入搜索关键词" @confirm="confirm"/>
       </view>
       <block slot="right">
         <view class="scan">
           <view>扫一扫</view>
-          <uni-icon type="arrowdown" color="#FFF" size="22" />
+          <uni-icons type="arrowdown" color="#FFF" size="22" />
         </view>
       </block>
     </uni-nav-bar>
-    <view class="recommend-search">
+
+
+
+
+
+    <!--<view class="recommend-search">
       <text>推荐：</text>
       <uni-badge v-for="(item, index) in recommendList" :key="index" :text="item.text" type="error"></uni-badge>
     </view>
@@ -42,11 +47,13 @@
 
       </view>
     </view>
-    <view style="height: 1000upx;"></view>
+    <view style="height: 1000upx;"></view>-->
   </view>
 </template>
 
 <script>
+// import uniIcons from "@/components/uni-icons/uni-icons.vue"
+// import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
 export default {
   data() {
     return {
@@ -67,6 +74,7 @@ export default {
       ]
     };
   },
+  // components: {uniIcons},
   /**
    * 当 searchInput 配置 disabled 为 true 时触发
    */
