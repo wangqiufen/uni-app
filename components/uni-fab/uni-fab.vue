@@ -1,65 +1,40 @@
 <template>
 	<view>
-		<view v-if="popMenu && (leftBottom||rightBottom||leftTop||rightTop)" :class="{
-        'uni-fab--leftBottom': leftBottom,
-        'uni-fab--rightBottom': rightBottom,
-        'uni-fab--leftTop': leftTop,
-        'uni-fab--rightTop': rightTop
-      }" class="uni-fab">
-			<view :class="{
-          'uni-fab__content--left': horizontal === 'left',
-          'uni-fab__content--right': horizontal === 'right',
-          'uni-fab__content--flexDirection': direction === 'vertical',
-          'uni-fab__content--flexDirectionStart': flexDirectionStart,
-          'uni-fab__content--flexDirectionEnd': flexDirectionEnd,
-		  'uni-fab__content--other-platform': !isAndroidNvue
-        }" :style="{ width: boxWidth, height: boxHeight, backgroundColor: styles.backgroundColor }" class="uni-fab__content" elevation="5">
-				<view v-if="flexDirectionStart || horizontalLeft" class="uni-fab__item uni-fab__item--first" />
-				<view v-for="(item, index) in content" :key="index" :class="{ 'uni-fab__item--active': isShow }" class="uni-fab__item" @click="_onItemClick(index, item)">
-					<image :src="item.active ? item.selectedIconPath : item.iconPath" class="uni-fab__item-image" mode="widthFix" />
-					<text class="uni-fab__item-text" :style="{ color: item.active ? styles.selectedColor : styles.color }">{{ item.text }}</text>
-				</view>
-				<view v-if="flexDirectionEnd || horizontalRight" class="uni-fab__item uni-fab__item--first" />
-			</view>
-		</view>
 		<view :class="{
-		  'uni-fab__circle--leftBottom': leftBottom,
-		  'uni-fab__circle--rightBottom': rightBottom,
-		  'uni-fab__circle--leftTop': leftTop,
-		  'uni-fab__circle--rightTop': rightTop,
-		  'uni-fab__content--other-platform': !isAndroidNvue
-		}" class="uni-fab__circle uni-fab__plus" :style="{ 'background-color': styles.buttonColor }" @click="_onClick">
-			<view class="fab-circle-v" :class="{'uni-fab__plus--active': isShow}"></view>
-			<view class="fab-circle-h" :class="{'uni-fab__plus--active': isShow}"></view>
+        leftBottom: leftBottom,
+        rightBottom: rightBottom,
+        leftTop: leftTop,
+        rightTop: rightTop
+      }" class="fab-box fab">
+			<view :class="{
+          left: horizontal === 'left' && direction === 'horizontal',
+          top: vertical === 'top' && direction === 'vertical',
+          bottom: vertical === 'bottom' && direction === 'vertical',
+          right: horizontal === 'right' && direction === 'horizontal'
+        }" :style="{ 'background-color': styles.buttonColor }" class="fab-circle" @click="_onClick">
+				<text :class="{ active: isShow }" class="uni-icon uni-icon-plusempty" />
+			</view>
+			<view :class="{
+          left: horizontal === 'left',
+          right: horizontal === 'right',
+          flexDirection: direction === 'vertical',
+          flexDirectionStart: flexDirectionStart,
+          flexDirectionEnd: flexDirectionEnd
+        }" :style="{ width: boxWidth, height: boxHeight, background: styles.backgroundColor }" class="fab-content">
+				<view v-if="flexDirectionStart || horizontalLeft" class="fab-item first" />
+				<view v-for="(item, index) in content" :key="index" :class="{ active: isShow }" :style="{
+            color: item.active ? styles.selectedColor : styles.color
+          }" class="fab-item" @click="_onItemClick(index, item)">
+					<image :src="item.active ? item.selectedIconPath : item.iconPath" class="content-image" mode="widthFix" />
+					<text class="text">{{ item.text }}</text>
+				</view>
+				<view v-if="flexDirectionEnd || horizontalRight" class="fab-item first" />
+			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	let platform = 'other'
-	// #ifdef APP-NVUE
-	platform = uni.getSystemInfoSync().platform
-	// #endif
-
-	/**
-	 * Fab 悬浮按钮
-	 * @description 点击可展开一个图形按钮菜单
-	 * @tutorial https://ext.dcloud.net.cn/plugin?id=144
-	 * @property {Object} pattern 可选样式配置项
-	 * @property {Object} horizontal = [left | right] 水平对齐方式
-	 * 	@value left 左对齐
-	 * 	@value right 右对齐
-	 * @property {Object} vertical = [bottom | top] 垂直对齐方式
-	 * 	@value bottom 下对齐
-	 * 	@value top 上对齐
-	 * @property {Object} direction = [horizontal | vertical] 展开菜单显示方式
-	 * 	@value horizontal 水平显示
-	 * 	@value vertical 垂直显示
-	 * @property {Array} content 展开菜单内容配置项
-	 * @property {Boolean} popMenu 是否使用弹出菜单
-	 * @event {Function} trigger 展开菜单点击事件，返回点击信息
-	 * @event {Function} fabClick 悬浮按钮点击事件
-	 */
 	export default {
 		name: 'UniFab',
 		props: {
@@ -90,17 +65,13 @@
 			show: {
 				type: Boolean,
 				default: false
-			},
-			popMenu: {
-				type: Boolean,
-				default: true
 			}
 		},
 		data() {
 			return {
 				fabShow: false,
+				flug: true,
 				isShow: false,
-				isAndroidNvue: platform === 'android',
 				styles: {
 					color: '#3c3e49',
 					selectedColor: '#007AFF',
@@ -111,10 +82,10 @@
 		},
 		computed: {
 			contentWidth(e) {
-				return (this.content.length + 1) * 55 + 10 + 'px'
+				return uni.upx2px((this.content.length + 1) * 110 + 20) + 'px'
 			},
 			contentWidthMin() {
-				return 55 + 'px'
+				return uni.upx2px(110) + 'px'
 			},
 			// 动态计算宽度
 			boxWidth() {
@@ -154,7 +125,7 @@
 		},
 		watch: {
 			pattern(newValue, oldValue) {
-				//console.log(JSON.stringify(newValue))
+				console.log(JSON.stringify(newValue))
 				this.styles = Object.assign({}, this.styles, newValue)
 			}
 		},
@@ -168,10 +139,6 @@
 		},
 		methods: {
 			_onClick() {
-				this.$emit('fabClick')
-				if (!this.popMenu) {
-					return
-				}
 				this.isShow = !this.isShow
 			},
 			open() {
@@ -208,221 +175,183 @@
 </script>
 
 <style scoped>
-	.uni-fab {
-		position: fixed;
-		/* #ifndef APP-NVUE */
-		display: flex;
-		/* #endif */
-		justify-content: center;
-		align-items: center;
-		z-index: 10;
+	@font-face {
+		font-family: uniicons;
+		font-weight: normal;
+		font-style: normal;
+		src: url('https://img-cdn-qiniu.dcloud.net.cn/fonts/uni.ttf') format('truetype');
 	}
 
-	.uni-fab--active {
+	.uni-icon {
+		font-family: uniicons;
+		font-size: 24px;
+		font-weight: normal;
+		font-style: normal;
+		line-height: 1;
+		display: inline-block;
+		text-decoration: none;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	.uni-icon-plusempty:before {
+		content: '\e468';
+	}
+
+	.fab-box {
+		position: fixed;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 2;
+	}
+
+	.fab-box.top {
+		width: 60upx;
+		height: 60upx;
+		right: 30upx;
+		bottom: 60upx;
+		border: 1px #5989b9 solid;
+		background: #6699cc;
+		border-radius: 10upx;
+		color: #fff;
+		transition: all 0.3;
+		opacity: 0;
+	}
+
+	.fab-box.active {
 		opacity: 1;
 	}
 
-	.uni-fab--leftBottom {
-		left: 5px;
-		bottom: 20px;
-		/* #ifdef H5 */
-		bottom: calc(20px + var(--window-bottom));
-		/* #endif */
-		padding: 10px;
+	.fab-box.fab {
+		z-index: 10;
 	}
 
-	.uni-fab--leftTop {
-		left: 5px;
-		top: 30px;
-		/* #ifdef H5 */
-		top: calc(30px + var(--window-top));
-		/* #endif */
-		padding: 10px;
+	.fab-box.fab.leftBottom {
+		left: 30upx;
+		bottom: 60upx;
 	}
 
-	.uni-fab--rightBottom {
-		right: 5px;
-		bottom: 20px;
+	.fab-box.fab.leftTop {
+		left: 30upx;
+		top: 80upx;
 		/* #ifdef H5 */
-		bottom: calc(20px + var(--window-bottom));
+		top: calc(80upx + var(--window-top));
 		/* #endif */
-		padding: 10px;
 	}
 
-	.uni-fab--rightTop {
-		right: 5px;
-		top: 30px;
-		/* #ifdef H5 */
-		top: calc(30px + var(--window-top));
-		/* #endif */
-		padding: 10px;
+	.fab-box.fab.rightBottom {
+		right: 30upx;
+		bottom: 60upx;
 	}
 
-	.uni-fab__circle {
-		position: fixed;
-		/* #ifndef APP-NVUE */
+	.fab-box.fab.rightTop {
+		right: 30upx;
+		top: 80upx;
+		/* #ifdef H5 */
+		top: calc(80upx + var(--window-top));
+		/* #endif */
+	}
+
+	.fab-circle {
 		display: flex;
-		/* #endif */
 		justify-content: center;
 		align-items: center;
-		width: 55px;
-		height: 55px;
-		background-color: #3c3e49;
-		border-radius: 55px;
+		position: absolute;
+		width: 110upx;
+		height: 110upx;
+		background: #3c3e49;
+		/* background: #5989b9; */
+		border-radius: 50%;
+		box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.2);
 		z-index: 11;
 	}
 
-	.uni-fab__circle--leftBottom {
-		left: 15px;
-		bottom: 30px;
-		/* #ifdef H5 */
-		bottom: calc(30px + var(--window-bottom));
-		/* #endif */
-	}
-
-	.uni-fab__circle--leftTop {
-		left: 15px;
-		top: 40px;
-		/* #ifdef H5 */
-		top: calc(40px + var(--window-top));
-		/* #endif */
-	}
-
-	.uni-fab__circle--rightBottom {
-		right: 15px;
-		bottom: 30px;
-		/* #ifdef H5 */
-		bottom: calc(30px + var(--window-bottom));
-		/* #endif */
-	}
-
-	.uni-fab__circle--rightTop {
-		right: 15px;
-		top: 40px;
-		/* #ifdef H5 */
-		top: calc(40px + var(--window-top));
-		/* #endif */
-	}
-
-	.uni-fab__circle--left {
+	.fab-circle.left {
 		left: 0;
 	}
 
-	.uni-fab__circle--right {
+	.fab-circle.right {
 		right: 0;
 	}
 
-	.uni-fab__circle--top {
+	.fab-circle.top {
 		top: 0;
 	}
 
-	.uni-fab__circle--bottom {
+	.fab-circle.bottom {
 		bottom: 0;
 	}
 
-	.uni-fab__plus {
+	.fab-circle .uni-icon-plusempty {
+		color: #ffffff;
+		font-size: 80upx;
+		transition: all 0.3s;
 		font-weight: bold;
 	}
 
-	.fab-circle-v {
-		position: absolute;
-		width: 3px;
-		height: 31px;
-		left: 26px;
-		top: 12px;
-		background-color: white;
-		transform: rotate(0deg);
-		transition: transform 0.3s;
-	}
-
-	.fab-circle-h {
-		position: absolute;
-		width: 31px;
-		height: 3px;
-		left: 12px;
-		top: 26px;
-		background-color: white;
-		transform: rotate(0deg);
-		transition: transform 0.3s;
-	}
-
-	.uni-fab__plus--active {
+	.fab-circle .uni-icon-plusempty.active {
 		transform: rotate(135deg);
+		font-size: 80upx;
 	}
 
-	.uni-fab__content {
-		/* #ifndef APP-NVUE */
+	.fab-content {
+		background: #6699cc;
 		box-sizing: border-box;
 		display: flex;
-		/* #endif */
-		flex-direction: row;
-		border-radius: 55px;
+		border-radius: 100upx;
 		overflow: hidden;
-		transition-property: width, height;
-		transition-duration: 0.2s;
-		width: 55px;
-		border-color: #DDDDDD;
-		border-width: 1rpx;
-		border-style: solid;
+		box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
+		transition: all 0.2s;
+		width: 110upx;
 	}
 
-	.uni-fab__content--other-platform {
-		border-width: 0px;
-		box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.2);
-	}
-
-	.uni-fab__content--left {
+	.fab-content.left {
 		justify-content: flex-start;
 	}
 
-	.uni-fab__content--right {
+	.fab-content.right {
 		justify-content: flex-end;
 	}
 
-	.uni-fab__content--flexDirection {
+	.fab-content.flexDirection {
 		flex-direction: column;
 		justify-content: flex-end;
 	}
 
-	.uni-fab__content--flexDirectionStart {
+	.fab-content.flexDirectionStart {
 		flex-direction: column;
 		justify-content: flex-start;
 	}
 
-	.uni-fab__content--flexDirectionEnd {
+	.fab-content.flexDirectionEnd {
 		flex-direction: column;
 		justify-content: flex-end;
 	}
 
-	.uni-fab__item {
-		/* #ifndef APP-NVUE */
+	.fab-content .fab-item {
 		display: flex;
-		/* #endif */
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		width: 55px;
-		height: 55px;
+		width: 110upx;
+		height: 110upx;
+		font-size: 24upx;
+		color: #fff;
 		opacity: 0;
 		transition: opacity 0.2s;
 	}
 
-	.uni-fab__item--active {
+	.fab-content .fab-item.active {
 		opacity: 1;
 	}
 
-	.uni-fab__item-image {
-		width: 25px;
-		height: 25px;
-		margin-bottom: 3px;
+	.fab-content .fab-item .content-image {
+		width: 50upx;
+		height: 50upx;
+		margin-bottom: 5upx;
 	}
 
-	.uni-fab__item-text {
-		color: #FFFFFF;
-		font-size: 12px;
-	}
-
-	.uni-fab__item--first {
-		width: 55px;
+	.fab-content .fab-item.first {
+		width: 110upx;
 	}
 </style>
