@@ -3,14 +3,14 @@
     <!-- 搜索-->
     <uni-nav-bar class="search" :fixed="true" color="#FFF" background-color="#F75E30" left-icon="scan" @click-left="showCity" @click-right="scan">
       <block slot="left">
-        <view class="scan">
-          <view>扫一扫</view>
+        <view class="scan-view">
           <uni-icon type="arrowdown" color="#FFF" size="22" />
+          <view>扫一扫</view>
         </view>
       </block>
       <view class="input-view">
-        <uni-icon type="search" size="22" color="#7E7E7E" />
-        <input confirm-type="search" class="input" type="text" placeholder="输入搜索关键词" @confirm="confirm" />
+        <uni-icon class="uni-icon" type="search" color="#7F7F7F" size="15" />
+        <input confirm-type="search" class="input" type="text" value="新一代V3.0智能手环发售" placeholder="输入搜索关键词" @confirm="confirm"/>
       </view>
       <block slot="right">
         <view class="scan">
@@ -112,7 +112,7 @@ export default {
 
 <style lang="less">
 .search{
-  .scan{
+  .scan-view{
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -124,14 +124,16 @@ export default {
   .input-view {
     width: 92%;
     display: flex;
-    background-color: #e7e7e7;
+    background-color: #FFF;
     height: 30px;
     border-radius: 15px;
     padding: 0 4%;
     flex-wrap: nowrap;
     margin: 7px 0;
     line-height: 30px;
+    color: #7E7E7E;
     .uni-icon {
+      width: 20px;
       line-height: 30px !important;
     }
     .input {
