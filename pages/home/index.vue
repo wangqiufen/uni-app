@@ -1,59 +1,49 @@
 <template>
   <view class="home-page">
     <!-- 搜索-->
-    <uni-nav-bar class="search" :fixed="true" color="#FFF" background-color="#F75E30" left-icon="scan" @click-left="showCity" @click-right="scan">
+    <uni-nav-bar class="search" :fixed="true" background-color="#F75E30" @click-left="handleNavLeft" @click-right="handleNavRight">
       <block slot="left">
-        <view class="scan-view">
-          <uni-icons type="arrowdown" color="#FFF" size="22" />
-          <view>扫一扫</view>
-        </view>
+        <uni-icons type="scan" color="#FFF"  size="22" style="margin-left: 5px;"/>
       </block>
       <view class="input-view">
-        <uni-icons class="uni-icon" type="search" color="#7F7F7F" size="15" />
-        <input confirm-type="search" class="input" type="text" value="新一代V3.0智能手环发售" placeholder="输入搜索关键词" @confirm="confirm"/>
+        <uni-icons class="uni-icon" type="search" color="#7F7F7F" size="20" />
+        <input confirm-type="search" class="input" type="text" value="新一代V3.0智能手环发售" placeholder="输入搜索关键词" @confirm="handleNavSearch"/>
       </view>
       <block slot="right">
-        <view class="scan">
-          <view>扫一扫</view>
-          <uni-icons type="arrowdown" color="#FFF" size="22" />
-        </view>
+        <uni-icons type="shop" color="#FFF"  size="22" style="margin-right: 8px;"/>
+        <uni-icons type="chatbubble" color="#FFF"  size="22" />
       </block>
     </uni-nav-bar>
-
-
-
-
-
-    <!--<view class="recommend-search">
-      <text>推荐：</text>
-      <uni-badge v-for="(item, index) in recommendList" :key="index" :text="item.text" type="error"></uni-badge>
-    </view>
-    <swiper indicator-dots="true">
-      <swiper-item v-for="(img, key) in imgUrls" :key="key"><image :src="img" /></swiper-item>
-    </swiper>
-    <view class="uni-padding-wrap uni-common-mt">
-      <view class="uni-title">
-        <view>本示例为导航栏带搜索框完整功能演示，主要演示有：</view>
-        <view>1. 导航栏为 transparent 模式，向上滑动页面，导航栏会从透明变为实色。</view>
-        <view>2. 点击搜索框跳转到搜索页面。</view>
-        <view>3. 点击导航栏右侧按钮实现关联操作。</view>
-        <view>4. 搜索页面为提示词搜索，输入内容实时显示关联词。</view>
-        <view>5. 搜索结果根据搜索内容高亮显示文字。</view>
-        <view>6. 点击搜索列表或者软键盘搜索按钮，会将结果保存到搜索历史列表。</view>
-        <view>7. 点击删除图标，清空历史搜索列表。</view>
-        <view>Tips </view>
-        <view>1. 本示例目前仅支持 App 端</view>
-        <view>2. 所有示例均为演示使用，具体逻辑需要自己实现。</view>
-
+    <view class="recommend-search">
+      <text class="text">推荐：</text>
+      <view v-for="(item, index) in recommendList" :key="index" class="tag-view">
+        <uni-tag :text="item.text" circle size="small" type="error" />
       </view>
     </view>
-    <view style="height: 1000upx;"></view>-->
+    <!--轮播区-->
+    <view class="bg-view"></view>
+    <view class="carousel-view">
+      <view class="carousel-content">
+        <view>
+          <uni-swiper-dot :info="info" :current="current" :dots-styles="dotsStyles" field="content">
+            <swiper class="swiper-box" @change="change">
+              <swiper-item v-for="(item, index) in info" :key="index">
+                <view :class="item.colorClass" class="swiper-item">
+                  <image class="image" :src="item.url" mode="aspectFill" />
+                </view>
+              </swiper-item>
+            </swiper>
+          </uni-swiper-dot>
+        </view>
+      </view>
+    </view>
+
+
+
   </view>
 </template>
 
 <script>
-// import uniIcons from "@/components/uni-icons/uni-icons.vue"
-// import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
 export default {
   data() {
     return {
@@ -67,88 +57,156 @@ export default {
         {text: '包包'},
         {text: '美容美妆'}
       ],
-      showSwiper: false,
-      imgUrls: [
-        'https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/muwu.jpg',
-        'https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/cbd.jpg'
-      ]
+      // 轮播
+      info: [
+        {
+          colorClass: 'uni-bg-red',
+          url: 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg',
+          content: '内容 A'
+        },
+        {
+          colorClass: 'uni-bg-green',
+          url: 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/muwu.jpg',
+          content: '内容 B'
+        },
+        {
+          colorClass: 'uni-bg-blue',
+          url: 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/cbd.jpg',
+          content: '内容 C'
+        }
+      ],
+      current: 0,
+      dotsStyles: {
+        backgroundColor: 'rgba(0, 0, 0, .4)',
+        border: '1px rgba(0, 0, 0, .3) solid',
+        color: '#FFFFFF',
+        selectedBackgroundColor: '#FF4A68',
+        selectedBorder: '1px rgba(0, 0, 0, .9) solid'
+      }
     };
   },
-  // components: {uniIcons},
-  /**
-   * 当 searchInput 配置 disabled 为 true 时触发
-   */
-  onNavigationBarSearchInputClicked(e) {
-    console.log('事件执行了')
-    uni.navigateTo({
-      url: '/pages/template/nav-search-input/detail/detail'
-    });
-  },
-  /**
-   *  点击导航栏 buttons 时触发
-   */
-  onNavigationBarButtonTap() {
-    uni.showModal({
-      title: '提示',
-      content: '用户点击了功能按钮，这里仅做展示。',
-      success: res => {
-        if (res.confirm) {
-          console.log('用户点击了确定');
-        }
-      }
-    });
-  },
   methods: {
-    showCity() {
+    /**
+     * nav left点击
+    * */
+    handleNavLeft() {
       uni.showToast({
         title: '选择城市'
       });
     },
-    scan() {
+    /**
+     * nav right点击
+     * */
+    handleNavRight() {
       uni.showToast({
         title: '扫码'
       });
     },
-    confirm() {
+    /**
+     * nav 搜索
+     * */
+    handleNavSearch() {
       uni.showToast({
         title: '搜索'
       });
-    }
+    },
+    /**
+    * 轮播切换
+    * */
+    change(e) {
+      this.current = e.detail.current
+    },
   }
 };
 </script>
 
-<style lang="less">
-.search{
-  .scan-view{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-left: 8px;
-    white-space: nowrap;
-  }
-  .input-view {
-    width: 92%;
-    display: flex;
-    background-color: #FFF;
-    height: 30px;
-    border-radius: 15px;
-    padding: 0 4%;
-    flex-wrap: nowrap;
-    margin: 7px 0;
-    line-height: 30px;
-    color: #7E7E7E;
-    .uni-icon {
-      width: 20px;
-      line-height: 30px !important;
+<style lang="scss" scoped>
+.home-page{
+  .search{
+    .input-view {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      background-color: #f8f8f8;
+      height: 30px;
+      border-radius: 15px;
+      padding: 0 15px;
+      flex-wrap: nowrap;
+      margin: 7px 0;
+      line-height: 30px;
     }
     .input {
       height: 30px;
       line-height: 30px;
-      width: 94%;
-      padding: 0 3%;
+      padding: 0 5px;
+      background-color: #f8f8f8;
+    }
+  }
+  .recommend-search{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    background-color: #F75E30;
+    padding: 20rpx;
+    .text{
+      height:23px;
+      font-size:12pt;
+      font-weight:400;
+      color: #FFF;
+    }
+    .tag-view {
+      margin: 4rpx 10rpx 10rpx;
+      line-height: 16px;
+    }
+  }
+  .bg-view{
+    background-color: #F75E30;
+    height: 90pt;
+    border-bottom-left-radius: 50pt;
+    border-bottom-right-radius: 50pt;
+  }
+  .carousel-view{
+    padding: 0 5pt;
+    .carousel-content{
+      height: 194pt;
+      background-color: #FFF;
+      border-radius: 10pt 10pt 0 0;
+      .swiper-box{
+        height: 100pt;
+        .swiper-item {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: #999;
+          color: #fff;
+          .image {
+            img{
+              width: 750rpx;
+              border-radius: 10pt;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</style>
+<style lang="scss">
+.home-page{
+  .search{
+    /deep/ .uni-navbar__content{
+      width: 100%;
+      border-bottom: none;
+    }
+    /deep/ .uni-navbar__header-btns-left {
+      width: 40px;
+    }
+  }
+  .recommend-search{
+    .uni-tag--small {
+      line-height: 16px;
     }
   }
 }
