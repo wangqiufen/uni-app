@@ -13,11 +13,16 @@ export default {
 </script>
 
 <style>
-/* 解决头条小程序组件内引入字体不生效的问题 */
-/* #ifdef MP-TOUTIAO */
-@font-face {
-	font-family: uniicons;
-	src: url('/static/uni.ttf');
+/* #ifndef APP-PLUS-NVUE */
+/* uni.css - 通用组件、模板样式库，可以当作一套ui库应用 */
+@import './common/uni.css';
+
+/* 以下样式用于 hello uni-app 演示所需 */
+page {
+  background-color: #F2F2F2;
+  height: 100%;
+  font-size: 14px;
+  line-height: 1.8;
 }
-/* #endif */
+
 </style>
